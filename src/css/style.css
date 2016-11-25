@@ -1,0 +1,63 @@
+@import 'reset';
+
+body {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 62.5%;
+}
+
+.container {
+  margin: 1rem;
+}
+
+.videos {
+
+  &::after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+
+}
+
+a {
+  display: block;
+  font-size: 2rem;
+  height: 4rem;
+  border: .1rem solid black;
+  padding: .8rem;
+  margin-left: 1rem;
+  text-decoration: none;
+}
+
+header {
+  margin: 1rem;
+  margin-top: 2rem;
+  font-size: 3rem;
+  color: black;
+}
+
+.video {
+  position: relative;
+  float: left;
+  border: solid .1rem black;
+  margin: 1rem;
+}
+
+video {
+  height: 38rem;
+  width: 50.6rem;
+}
+
+.meta {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: white;
+  background-color: #ffad33;
+  padding: .5rem 1rem;
+  font-size: 1.5rem;
+}
+
+.disabled {
+  opacity: .1;
+}
