@@ -66,8 +66,11 @@ body {
 }
 
 .container {
-  margin: 16px;
-  margin: 1rem;
+  margin: 0px;
+  margin: 0rem;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
 }
 
 .videos {
@@ -106,20 +109,50 @@ header {
 }
 
 .video {
-  position: relative;
-  float: left;
-  border: solid 1.6px black;
-  border: solid .1rem black;
-  margin: 16px;
-  margin: 1rem;
+  position: absolute;
+  right: 0px;
+  right:0rem;
+  bottom: 0px;
+  bottom:0rem;
+  overflow:hidden;
+}
+.video:nth-child(1){
+  z-index:2;
+  box-shadow: 0 30px 50px 5px rgba(0,0,0,.44);
+  border-radius: 50%;
+  width: 320px;
+  width:20rem;
+  height: 320px;
+  height:20rem;
+  right: 80px;
+  right:5rem;
+  bottom: 80px;
+  bottom:5rem;
 }
 
+
 video {
-  height: 608px;
-  height: 38rem;
-  width: 809.6px;
-  width: 50.6rem;
+  height: auto%;
+  width: 100%;
+  -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
 }
+
+.video:nth-child(1) > video{
+  height:100%;
+  width:auto;
+}
+
+.video:nth-child(2){
+  z-index:1;
+  width:100vw;
+  height:100vh;
+  top: 0px;
+  top:0rem;
+  left: 0px;
+  left:0rem;
+}
+
 
 .meta {
   position: absolute;
