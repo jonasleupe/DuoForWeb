@@ -6,7 +6,8 @@ const Video = ({stream}) => {
 
   return (
     <article className='video'>
-      <video autoPlay src={stream}></video>
+      {/* <video autoPlay src={stream}></video> */}
+      <audio autoPlay src={stream}></audio>
     </article>
   );
 };

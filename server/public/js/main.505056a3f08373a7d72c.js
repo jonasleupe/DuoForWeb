@@ -14306,8 +14306,7 @@ var _jsxFileName = '/Users/JONASLEUPE/Documents/SCHOOL/3DEV/EXP_WEB/W5/labo/anth
 
 
 var Video = function Video(_ref) {
-  var meta = _ref.meta,
-      stream = _ref.stream;
+  var stream = _ref.stream;
 
 
   if (stream) stream = URL.createObjectURL(stream);
@@ -14319,9 +14318,9 @@ var Video = function Video(_ref) {
         lineNumber: 8
       }
     },
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('video', { autoPlay: true, src: stream, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('audio', { autoPlay: true, src: stream, __source: {
         fileName: _jsxFileName,
-        lineNumber: 9
+        lineNumber: 10
       }
     })
   );
@@ -14431,7 +14430,7 @@ var App = function (_Component) {
   };
 
   App.prototype.initStream = function initStream() {
-    navigator.getUserMedia({ video: true }, this.handleYouStream, this.handleYouStreamError);
+    navigator.getUserMedia({ audio: true }, this.handleYouStream, this.handleYouStreamError);
   };
 
   App.prototype.componentDidMount = function componentDidMount() {
@@ -14452,12 +14451,12 @@ var App = function (_Component) {
           lineNumber: 90
         }
       },
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_Video__["a" /* default */], { meta: 'you', stream: youStream, __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_Video__["a" /* default */], { stream: youStream, __source: {
           fileName: _jsxFileName,
           lineNumber: 91
         }
       }),
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_Video__["a" /* default */], { meta: 'strange', stream: strangerStream, __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__components_Video__["a" /* default */], { stream: strangerStream, __source: {
           fileName: _jsxFileName,
           lineNumber: 92
         }
@@ -33038,4 +33037,4 @@ module.exports = __webpack_require__(107);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.5853f40e312ebdfe28a0.js.map
+//# sourceMappingURL=main.505056a3f08373a7d72c.js.map
