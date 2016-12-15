@@ -11,7 +11,9 @@ class App extends Component {
     youStream: undefined,
     strangerStream: undefined,
     voiceActive: false,
-    voiceCommand: ``
+    voiceCommand: ``,
+    result: `resultFalse`,
+    googleResult: ``
   }
 
   initPeer = () => {
@@ -78,25 +80,24 @@ class App extends Component {
     e.preventDefault();
     console.log(`click`);
 
-    this.setState({voiceActive: true});
+    this.setState({voiceActive: true, voiceCommand: ``});
+
+    annyang.start();
 
     annyang.setLanguage(`nl-NL`);
     annyang.addCallback(`result`, function(userSaid) {
-      console.log(userSaid[0]);
-      this.setState({voiceCommand: userSaid[0]});
-      console.log(this);
-      //setState({voiceCommand: userSaid[0]});
-      // fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
-      //   .then(r => r.json())
-      //   .then(d => console.log(d));
+      this.setState({voiceCommand: userSaid[0], result: `resultTrue`});
+      fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
+        .then(r => r.json())
+        .then(d => this.setState({googleResult: d}));
+      this.handleStopVoiceCommands();
     }.bind(this));
 
-    annyang.start();
   }
 
-  handleStopVoiceCommands = e => {
-    e.preventDefault();
+  handleStopVoiceCommands = () => {
     this.setState({voiceActive: false});
+    annyang.abort();
   }
 
   initStream() {
@@ -112,19 +113,19 @@ class App extends Component {
   }
 
   render() {
-    const {youStream, strangerStream, voiceActive, voiceCommand} = this.state;
-    console.log(voiceCommand);
+    const {youStream, strangerStream, voiceActive, voiceCommand, result, googleResult} = this.state;
+    console.log(googleResult);
 
     return (
       <main>
           <Video stream={youStream} muted={`true`} />
           <Video stream={strangerStream} muted={`false`} />
           {voiceActive ? (
-            <button className='google' onClick={this.handleStopVoiceCommands}></button>
+            <button className={`google voiceActive`} onClick={this.handleStopVoiceCommands}></button>
           ) : (
-            <button className='google' onClick={this.handleStartVoiceCommands}></button>
+            <button className={`google`} onClick={this.handleStartVoiceCommands}></button>
           )}
-          <div className='result'><p className='result_text'>{voiceCommand}</p></div>
+          <div className='result'><p className={`result_text ${result}`}>{voiceCommand}</p></div>
       </main>
     );
   }
