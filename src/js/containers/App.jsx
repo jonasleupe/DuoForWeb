@@ -83,8 +83,6 @@ class App extends Component {
   componentDidMount() {
     this.initStream();
 
-    console.log(`hi`);
-
     if (annyang) {
       const commands = {
         // test: function() {console.log(`Test`);},

@@ -3,13 +3,18 @@ import React, {PropTypes} from 'react';
 const Video = ({stream, muted}) => {
 
   if (stream) stream = URL.createObjectURL(stream);
-
+  {/* <video autoPlay src={stream} muted></video> */}
   return (
-    <article className='video'>
-      <video autoPlay src={stream}></video>
-      <audio autoPlay src={stream} muted={muted}></audio>
-    </article>
+      <article className='video'>
+
+        {muted === `true` ? (
+          <video autoPlay src={stream} muted></video>
+        ) : (
+          <video autoPlay src={stream}></video>
+        )}
+      </article>
   );
+
 };
 
 Video.propTypes = {
