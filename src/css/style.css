@@ -6,10 +6,10 @@ body {
 }
 
 .container {
-  margin: 0rem;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .videos {
@@ -41,40 +41,39 @@ header {
 
 .video {
   position: absolute;
-  right:0rem;
-  bottom:0rem;
-  overflow:hidden;
-}
-.video:nth-child(1){
-  z-index:2;
-  box-shadow: 0 30px 50px 5px rgba(0,0,0,.44);
-  border-radius: 50%;
-  width:20rem;
-  height:20rem;
-  right:5rem;
-  bottom:5rem;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
 }
 
+.video:nth-child(1) {
+  z-index: 2;
+  box-shadow: 0 30px 50px 5px rgba(0, 0, 0, .44);
+  border-radius: 50%;
+  width: 20rem;
+  height: 20rem;
+  right: 5rem;
+  bottom: 5rem;
+}
 
 video {
-  height: auto%;
+  height: auto;
   width: 100%;
   transform: scaleX(-1);
 }
 
-.video:nth-child(1) > video{
-  height:100%;
-  width:auto;
+.video:nth-child(1) > video {
+  height: 100%;
+  width: auto;
 }
 
-.video:nth-child(2){
-  z-index:1;
-  width:100vw;
-  height:100vh;
-  top:0rem;
-  left:0rem;
+.video:nth-child(2) {
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
 }
-
 
 .meta {
   position: absolute;

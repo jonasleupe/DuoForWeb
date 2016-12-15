@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import IO from 'socket.io-client';
 import Peer from 'peerjs';
+import annyang from 'annyang';
 
 import Video from '../components/Video';
 
@@ -81,6 +82,25 @@ class App extends Component {
 
   componentDidMount() {
     this.initStream();
+
+    if (annyang) {
+      const commands = {
+        // test: function() {console.log(`Test`);},
+        // 'voeg *tag toe': this.setUrl
+        hello: function() { alert(`Hello world!`); }
+      };
+
+      annyang.addCommands(commands);
+
+      // annyang.addCallback(`result`, function(userSaid) {
+      //   console.log(`User said: ${userSaid}`);
+      // });
+
+      //annyang.addCallback(`end`, function() {console.log(`Sound detection has ended.`);});
+
+      annyang.setLanguage(`nl-NL`);
+      annyang.start();
+    }
   }
 
   render() {
