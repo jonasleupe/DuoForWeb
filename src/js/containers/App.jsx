@@ -74,7 +74,7 @@ class App extends Component {
 
   initStream() {
     navigator.getUserMedia (
-      {audio: true},
+      {audio: true, video: true},
       this.handleYouStream,
       this.handleYouStreamError
     );
@@ -108,8 +108,8 @@ class App extends Component {
 
     return (
       <main>
-          <Video stream={youStream} />
-          <Video stream={strangerStream} />
+          <Video stream={youStream} muted={`true`} />
+          <Video stream={strangerStream} muted={`false`} />
       </main>
     );
   }

@@ -1,20 +1,20 @@
 import React, {PropTypes} from 'react';
 
-const Video = ({stream}) => {
+const Video = ({stream, muted}) => {
 
   if (stream) stream = URL.createObjectURL(stream);
 
   return (
     <article className='video'>
-      {/* <video autoPlay src={stream}></video> */}
-      <audio autoPlay src={stream}></audio>
+      <video autoPlay src={stream}></video>
+      <audio autoPlay src={stream} muted={muted}></audio>
     </article>
   );
 };
 
 Video.propTypes = {
-  meta: PropTypes.string,
-  stream: PropTypes.object
+  stream: PropTypes.object,
+  muted: PropTypes.string
 };
 
 export default Video;

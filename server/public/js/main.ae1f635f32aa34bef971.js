@@ -14319,7 +14319,8 @@ var _jsxFileName = '/Users/JONASLEUPE/Documents/SCHOOL/3DEV/EXP_WEB/OPDRACHT/Duo
 
 
 var Video = function Video(_ref) {
-  var stream = _ref.stream;
+  var stream = _ref.stream,
+      muted = _ref.muted;
 
 
   if (stream) stream = URL.createObjectURL(stream);
@@ -14331,7 +14332,12 @@ var Video = function Video(_ref) {
         lineNumber: 8
       }
     },
-    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('audio', { autoPlay: true, src: stream, __source: {
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('video', { autoPlay: true, src: stream, muted: muted, __source: {
+        fileName: _jsxFileName,
+        lineNumber: 9
+      }
+    }),
+    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('audio', { autoPlay: true, src: stream, muted: muted, __source: {
         fileName: _jsxFileName,
         lineNumber: 10
       }
@@ -14340,8 +14346,8 @@ var Video = function Video(_ref) {
 };
 
 Video.propTypes = {
-  meta: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string,
-  stream: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].object
+  stream: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].object,
+  muted: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string
 };
 
 /* harmony default export */ exports["a"] = Video;
@@ -14446,7 +14452,7 @@ var App = function (_Component) {
   };
 
   App.prototype.initStream = function initStream() {
-    navigator.getUserMedia({ audio: true }, this.handleYouStream, this.handleYouStreamError);
+    navigator.getUserMedia({ audio: true, video: true }, this.handleYouStream, this.handleYouStreamError);
   };
 
   App.prototype.componentDidMount = function componentDidMount() {
@@ -14488,12 +14494,12 @@ var App = function (_Component) {
           lineNumber: 110
         }
       },
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: youStream, __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: youStream, muted: true, __source: {
           fileName: _jsxFileName,
           lineNumber: 111
         }
       }),
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: strangerStream, __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: strangerStream, muted: false, __source: {
           fileName: _jsxFileName,
           lineNumber: 112
         }
@@ -33074,4 +33080,4 @@ module.exports = __webpack_require__(107);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.3d5fc7721660fa681f83.js.map
+//# sourceMappingURL=main.ae1f635f32aa34bef971.js.map
