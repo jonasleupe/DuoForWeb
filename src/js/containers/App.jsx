@@ -85,18 +85,21 @@ class App extends Component {
 
     if (annyang) {
       const commands = {
-        // test: function() {console.log(`Test`);},
-        // 'voeg *tag toe': this.setUrl
-        hello: function() { alert(`Hello world!`); }
+        test: function() {console.log(`Test`);},
+        //'voeg *tag toe': this.setUrl
+        //hello: function() { alert(`Hello world!`); }
       };
 
       annyang.addCommands(commands);
 
-      // annyang.addCallback(`result`, function(userSaid) {
-      //   console.log(`User said: ${userSaid}`);
-      // });
+      annyang.addCallback(`result`, function(userSaid) {
+        //console.log({userSaid[0]});
+        fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
+          .then(r => r.json())
+          .then(d => console.log(d));
+      });
 
-      //annyang.addCallback(`end`, function() {console.log(`Sound detection has ended.`);});
+      annyang.addCallback(`end`, function() {console.log(`Sound detection has ended.`);});
 
       annyang.setLanguage(`nl-NL`);
       annyang.start();
