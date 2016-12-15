@@ -101,6 +101,8 @@ class App extends Component {
       annyang.setLanguage(`nl-NL`);
       annyang.start();
     }
+
+    console.log(`hi`);
   }
 
   render() {
