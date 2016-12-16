@@ -14320,25 +14320,27 @@ var _jsxFileName = '/Users/JONASLEUPE/Documents/SCHOOL/3DEV/EXP_WEB/OPDRACHT/Duo
 
 var Video = function Video(_ref) {
   var stream = _ref.stream,
-      muted = _ref.muted;
+      muted = _ref.muted,
+      connected = _ref.connected;
 
 
   if (stream) stream = URL.createObjectURL(stream);
   {/* <video autoPlay src={stream} muted></video> */}
+
   return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
     'article',
-    { className: 'video', __source: {
+    { className: 'video ' + connected, __source: {
         fileName: _jsxFileName,
-        lineNumber: 8
+        lineNumber: 9
       }
     },
     muted === 'true' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('video', { autoPlay: true, src: stream, muted: true, __source: {
         fileName: _jsxFileName,
-        lineNumber: 11
+        lineNumber: 12
       }
     }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('video', { autoPlay: true, src: stream, __source: {
         fileName: _jsxFileName,
-        lineNumber: 13
+        lineNumber: 14
       }
     })
   );
@@ -14346,7 +14348,8 @@ var Video = function Video(_ref) {
 
 Video.propTypes = {
   stream: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].object,
-  muted: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string
+  muted: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string,
+  connected: __WEBPACK_IMPORTED_MODULE_0_react__["PropTypes"].string
 };
 
 /* harmony default export */ exports["a"] = Video;
@@ -14396,7 +14399,9 @@ var App = function (_Component) {
       youStream: undefined,
       strangerStream: undefined,
       voiceActive: false,
-      voiceCommand: ''
+      voiceCommand: '',
+      result: 'resultFalse',
+      googleResult: ''
     }, _this.initPeer = function () {
       var id = _this.socket.id;
 
@@ -14444,29 +14449,30 @@ var App = function (_Component) {
       return console.error(e);
     }, _this.handleStartVoiceCommands = function (e) {
       e.preventDefault();
-      console.log('click');
+      _this.setState({ voiceActive: true, voiceCommand: '', result: 'resultFalse' });
 
-      _this.setState({ voiceActive: true });
-
+      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.start();
       __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.setLanguage('nl-NL');
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.addCallback('result', function (userSaid) {
-        this.setState({ voiceCommand: userSaid[0] });
-        //setState({voiceCommand: userSaid[0]});
-        // fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
-        //   .then(r => r.json())
-        //   .then(d => console.log(d));
-      }.bind(_this));
 
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.start();
-    }, _this.handleStopVoiceCommands = function (e) {
-      e.preventDefault();
+      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.addCallback('result', function (userSaid) {
+        var _this2 = this;
+
+        this.setState({ voiceCommand: userSaid[0], result: 'resultTrue' });
+        fetch('https://www.googleapis.com/customsearch/v1?q=' + userSaid[0] + '&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ').then(function (r) {
+          return r.json();
+        }).then(function (d) {
+          return _this2.setState({ googleResult: d });
+        });
+        console.log(__WEBPACK_IMPORTED_MODULE_3_annyang___default.a);
+        this.handleStopVoiceCommands();
+      }.bind(_this));
+    }, _this.handleStopVoiceCommands = function () {
       _this.setState({ voiceActive: false });
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.start();
+      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.abort();
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
 
   App.prototype.initSocket = function initSocket() {
-    // '/' gaat verbinden met de server waar het op draait
     this.socket = __WEBPACK_IMPORTED_MODULE_1_socket_io_client___default()('/');
     this.socket.on('connect', this.initPeer);
     this.socket.on('found', this.handleWSFound);
@@ -14485,52 +14491,94 @@ var App = function (_Component) {
         youStream = _state.youStream,
         strangerStream = _state.strangerStream,
         voiceActive = _state.voiceActive,
-        voiceCommand = _state.voiceCommand;
+        voiceCommand = _state.voiceCommand,
+        result = _state.result,
+        googleResult = _state.googleResult;
 
-    console.log(voiceCommand);
+
+    var connected = false;
+    var googleResponse = void 0,
+        googleLink = void 0;
+
+    if (googleResult) {
+      googleResponse = googleResult.items[0].title;
+      googleLink = googleResult.items[0].link;
+      console.log(googleResult.items[0]);
+    }
+
+    if (strangerStream === undefined) {
+      connected = 'strangerNotConnected';
+    } else {
+      connected = 'strangerConnected';
+    }
 
     return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
       'main',
       {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 118
+          lineNumber: 134
         }
       },
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: youStream, muted: 'true', __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: youStream, muted: 'true', connected: connected, __source: {
           fileName: _jsxFileName,
-          lineNumber: 119
+          lineNumber: 135
         }
       }),
-      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: strangerStream, muted: 'false', __source: {
+      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__components_Video__["a" /* default */], { stream: strangerStream, muted: 'false', connected: 'youStream', __source: {
           fileName: _jsxFileName,
-          lineNumber: 120
+          lineNumber: 136
         }
       }),
-      voiceActive ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('button', { className: 'google', onClick: this.handleStopVoiceCommands, __source: {
+      voiceActive ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('button', { className: 'google voiceActive', onClick: this.handleStopVoiceCommands, __source: {
           fileName: _jsxFileName,
-          lineNumber: 122
+          lineNumber: 138
         }
       }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('button', { className: 'google', onClick: this.handleStartVoiceCommands, __source: {
           fileName: _jsxFileName,
-          lineNumber: 124
+          lineNumber: 140
         }
       }),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { className: 'result', __source: {
+        { className: 'googleResult', __source: {
             fileName: _jsxFileName,
-            lineNumber: 126
+            lineNumber: 142
           }
         },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          'p',
-          { className: 'result_text', __source: {
+          'div',
+          { className: 'speakResult', __source: {
               fileName: _jsxFileName,
-              lineNumber: 126
+              lineNumber: 143
             }
           },
-          voiceCommand
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'p',
+            { className: 'result_text ' + result, __source: {
+                fileName: _jsxFileName,
+                lineNumber: 144
+              }
+            },
+            voiceCommand
+          )
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'div',
+          { className: 'searchResult', __source: {
+              fileName: _jsxFileName,
+              lineNumber: 146
+            }
+          },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'a',
+            { className: 'result_text googleLink ' + result, href: googleLink, target: '_blank', __source: {
+                fileName: _jsxFileName,
+                lineNumber: 147
+              }
+            },
+            googleResponse
+          )
         )
       )
     );
@@ -33109,4 +33157,4 @@ module.exports = __webpack_require__(107);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.e2465880e7c362b3076a.js.map
+//# sourceMappingURL=main.960ef4478812aaaf4532.js.map

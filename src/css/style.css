@@ -48,6 +48,17 @@ header {
 
 .video:nth-child(1) {
   z-index: 2;
+  transition: all 0.5s ease;
+}
+
+.strangerNotConnected {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.strangerConnected {
   box-shadow: 0 30px 50px 5px rgba(0, 0, 0, .44);
   border-radius: 50%;
   width: 20rem;
@@ -56,15 +67,22 @@ header {
   bottom: 5rem;
 }
 
+.video:nth-child(1) > video {
+  height: auto;
+  width: 100%;
+}
+
 video {
   height: auto;
   width: 100%;
   transform: scaleX(-1);
+  position: absolute;
+  bottom: 0;
 }
 
-.video:nth-child(1) > video {
-  height: 100%;
-  width: auto;
+.strangerConnected > video {
+  height: 100% !important;
+  width: auto !important;
 }
 
 .video:nth-child(2) {
@@ -99,12 +117,12 @@ video {
   background-size: 50%;
   background-repeat: no-repeat;
   border: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
   position: absolute;
   left: 5rem;
   bottom: 5rem;
   z-index: 999;
-  transition: all 0.5s ease;
+  transition: all 0.2s ease;
 }
 
 .google:hover {
@@ -117,31 +135,63 @@ video {
 
 .voiceActive {
   box-shadow: 0 5px 10px 0 #757575, 0 4px 5px 0 #a8a8a8;
-  background: #EF4749;
+  background: #ef4749;
   background-image: url('https://lh5.googleusercontent.com/OorCLDb2xlVQ4P2MDNCiwAnpv0K1ZrcDwEwRS3sOfDMrnYTnVPvCh7WtFQMbZ_S9u_jzcSLd8g=s128-h128-e365');
-  background-size: 80%;
+  background-size: 95%;
   background-repeat: no-repeat;
   background-position: center;
 }
 
-.result {
-  width: auto;
-  height: 5rem;
+.googleResult {
   position: absolute;
-  bottom: 5rem;
+  z-index: 998;
   left: 12rem;
+  bottom: 5rem;
+  width: auto;
+  height: auto;
   background: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.speakResult {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .1);
+  display: flex;
+  align-items: center;
+  transition: all 0.5s ease;
+  z-index: 998;
+}
+
+.searchResult {
+  position: relative;
+  height: auto;
+}
+
+.result_text {
+  font-size: 2em;
+  height: auto;
+  padding: 3rem;
   display: flex;
   align-items: center;
   transition: all 0.5s ease;
 }
 
-.resultTrue {
-  padding: 0rem 2rem;
+.resultFalse {
+  padding: 0;
 }
 
-.result_text {
-  font-size: 2em;
-  transition: all 0.5s ease;
+.resultTrue {
+  padding: 2.5rem;
+}
+
+.googleLink {
+  border: 0;
+  color: #1a0dab;
+  margin: 0;
 }

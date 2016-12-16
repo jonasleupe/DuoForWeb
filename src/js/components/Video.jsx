@@ -1,11 +1,12 @@
 import React, {PropTypes} from 'react';
 
-const Video = ({stream, muted}) => {
+const Video = ({stream, muted, connected}) => {
 
   if (stream) stream = URL.createObjectURL(stream);
   {/* <video autoPlay src={stream} muted></video> */}
+
   return (
-      <article className='video'>
+      <article className={`video ${connected}`}>
 
         {muted === `true` ? (
           <video autoPlay src={stream} muted></video>
@@ -19,7 +20,8 @@ const Video = ({stream, muted}) => {
 
 Video.propTypes = {
   stream: PropTypes.object,
-  muted: PropTypes.string
+  muted: PropTypes.string,
+  connected: PropTypes.string
 };
 
 export default Video;

@@ -63,7 +63,6 @@ class App extends Component {
   }
 
   initSocket() {
-    // '/' gaat verbinden met de server waar het op draait
     this.socket = IO(`/`);
     this.socket.on(`connect`, this.initPeer);
     this.socket.on(`found`, this.handleWSFound);
@@ -78,20 +77,20 @@ class App extends Component {
 
   handleStartVoiceCommands = e => {
     e.preventDefault();
-    console.log(`click`);
-
-    this.setState({voiceActive: true, voiceCommand: ``});
+    this.setState({voiceActive: true, voiceCommand: ``, result: `resultFalse`});
 
     annyang.start();
-
     annyang.setLanguage(`nl-NL`);
+
     annyang.addCallback(`result`, function(userSaid) {
       this.setState({voiceCommand: userSaid[0], result: `resultTrue`});
       fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
         .then(r => r.json())
         .then(d => this.setState({googleResult: d}));
+      console.log(annyang);
       this.handleStopVoiceCommands();
     }.bind(this));
+
 
   }
 
@@ -114,18 +113,40 @@ class App extends Component {
 
   render() {
     const {youStream, strangerStream, voiceActive, voiceCommand, result, googleResult} = this.state;
-    console.log(googleResult);
+
+
+    let connected = false;
+    let googleResponse, googleLink;
+
+    if (googleResult) {
+      googleResponse = googleResult.items[0].title;
+      googleLink = googleResult.items[0].link;
+      console.log(googleResult.items[0]);
+    }
+
+    if (strangerStream === undefined) {
+      connected = `strangerNotConnected`;
+    } else {
+      connected = `strangerConnected`;
+    }
 
     return (
       <main>
-          <Video stream={youStream} muted={`true`} />
-          <Video stream={strangerStream} muted={`false`} />
+          <Video stream={youStream} muted={`true`} connected={connected} />
+          <Video stream={strangerStream} muted={`false`} connected='youStream' />
           {voiceActive ? (
             <button className={`google voiceActive`} onClick={this.handleStopVoiceCommands}></button>
           ) : (
             <button className={`google`} onClick={this.handleStartVoiceCommands}></button>
           )}
-          <div className='result'><p className={`result_text ${result}`}>{voiceCommand}</p></div>
+          <div className='googleResult'>
+            <div className='speakResult'>
+              <p className={`result_text ${result}`}>{voiceCommand}</p>
+            </div>
+            <div className='searchResult'>
+              <a className={`result_text googleLink ${result}`} href={googleLink} target='_blank'>{googleResponse}</a>
+            </div>
+          </div>
       </main>
     );
   }
