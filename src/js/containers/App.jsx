@@ -4,6 +4,9 @@ import Peer from 'peerjs';
 import annyang from 'annyang';
 
 import Video from '../components/Video';
+import ResultVideo from '../components/ResultVideo';
+import ResultImage from '../components/ResultImage';
+import ResultWeb from '../components/ResultWeb';
 
 class App extends Component {
 
@@ -84,7 +87,7 @@ class App extends Component {
     //     .then(r => r.json())
     //     .then(d => this.setState({askResult: d}));
 
-    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/search?q=${tag}&count=5&offset=0&mkt=nl-NL&safesearch=Off`, {
+    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safesearch=Off`, {
       method: `GET`,
       headers: {
         Host: `api.cognitive.microsoft.com`,
@@ -103,7 +106,7 @@ class App extends Component {
     console.log(`de google image search is ${tag}`);
     this.setState({voiceCommand: tag, result: `resultTrue`});
 
-    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=${tag}&count=5&offset=0&mkt=nl-NL&safeSearch=Off`, {
+    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safeSearch=Off`, {
       method: `GET`,
       headers: {
         Host: `api.cognitive.microsoft.com`,
@@ -170,12 +173,21 @@ class App extends Component {
     const {youStream, strangerStream, voiceActive, voiceCommand, result, askResult} = this.state;
 
     let connected = false;
-    let googleResponse, googleLink;
+    let googleResponse;
 
     if (askResult) {
-      console.log(askResult._type);
-      // googleResponse = askResult.items[0].title;
-      // googleLink = askResult.items[0].link;
+      switch (askResult._type) {
+      case `Images`:
+        googleResponse = <ResultImage link={askResult.value[0].contentUrl} alt={askResult.value[0].name} title={askResult.value[0].name} />;
+        break;
+      case `Videos`:
+        //googleResponse = <ResultVideo link={askResult.value[0].url} alt={askResult.Videos.value[0].url} title={askResult.Videos.value[0].url} />;
+        //console.log(askResult);
+        break;
+      default:
+        googleResponse = <ResultWeb link={askResult.webPages.value[0].url} name={askResult.webPages.value[0].name} />;
+        break;
+      }
     }
 
     if (strangerStream === undefined) {
@@ -200,7 +212,7 @@ class App extends Component {
               <p className={`result_text ${result}`}>{voiceCommand}</p>
             </div>
             <div className='searchResult'>
-              <a className={`result_text googleLink ${result}`} href={googleLink} target='_blank'>{googleResponse}</a>
+                {googleResponse}
             </div>
           </div>
       </main>
