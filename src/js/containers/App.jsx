@@ -13,7 +13,7 @@ class App extends Component {
     voiceActive: false,
     voiceCommand: ``,
     result: `resultFalse`,
-    googleResult: ``
+    askResult: ``
   }
 
   initPeer = () => {
@@ -75,23 +75,78 @@ class App extends Component {
 
   handleYouStreamError = e => console.error(e);
 
+  searchBing = tag => {
+    console.log(`de google search is ${tag}`);
+
+    this.setState({voiceCommand: tag, result: `resultTrue`});
+
+    // fetch(`https://www.googleapis.com/customsearch/v1?q=${tag}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
+    //     .then(r => r.json())
+    //     .then(d => this.setState({askResult: d}));
+
+    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/search?q=${tag}&count=5&offset=0&mkt=nl-NL&safesearch=Off`, {
+      method: `GET`,
+      headers: {
+        Host: `api.cognitive.microsoft.com`,
+        'Ocp-Apim-Subscription-Key': `65ddc224f4e34b6d8e55f319e66133a9`
+      },
+    })
+    .then(r => r.json())
+    .then(d => this.setState({askResult: d}));
+
+
+
+    this.handleStopVoiceCommands();
+  }
+
+  searchBingImage = tag => {
+    console.log(`de google image search is ${tag}`);
+    this.setState({voiceCommand: tag, result: `resultTrue`});
+
+    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=${tag}&count=5&offset=0&mkt=nl-NL&safeSearch=Off`, {
+      method: `GET`,
+      headers: {
+        Host: `api.cognitive.microsoft.com`,
+        'Ocp-Apim-Subscription-Key': `65ddc224f4e34b6d8e55f319e66133a9`
+      },
+    })
+    .then(r => r.json())
+    .then(d => this.setState({askResult: d}));
+
+    this.handleStopVoiceCommands();
+  }
+
+  showYoutube = tag => {
+    console.log(`de youtube search is ${tag}`);
+    this.setState({voiceCommand: tag, result: `resultTrue`});
+
+    fetch(`https://api.cognitive.microsoft.com/bing/v5.0/videos/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safeSearch=Off`, {
+      method: `GET`,
+      headers: {
+        Host: `api.cognitive.microsoft.com`,
+        'Ocp-Apim-Subscription-Key': `65ddc224f4e34b6d8e55f319e66133a9`
+      },
+    })
+    .then(r => r.json())
+    .then(d => this.setState({askResult: d}));
+
+    this.handleStopVoiceCommands();
+  }
+
   handleStartVoiceCommands = e => {
     e.preventDefault();
     this.setState({voiceActive: true, voiceCommand: ``, result: `resultFalse`});
 
     annyang.start();
+
+    const commands = {
+      'search for *tag': this.searchBing,
+      'play *tag': this.showYoutube,
+      'show me *tag': this.searchBingImage
+    };
+
+    annyang.addCommands(commands);
     annyang.setLanguage(`nl-NL`);
-
-    annyang.addCallback(`result`, function(userSaid) {
-      this.setState({voiceCommand: userSaid[0], result: `resultTrue`});
-      fetch(`https://www.googleapis.com/customsearch/v1?q=${userSaid[0]}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
-        .then(r => r.json())
-        .then(d => this.setState({googleResult: d}));
-      console.log(annyang);
-      this.handleStopVoiceCommands();
-    }.bind(this));
-
-
   }
 
   handleStopVoiceCommands = () => {
@@ -112,16 +167,15 @@ class App extends Component {
   }
 
   render() {
-    const {youStream, strangerStream, voiceActive, voiceCommand, result, googleResult} = this.state;
-
+    const {youStream, strangerStream, voiceActive, voiceCommand, result, askResult} = this.state;
 
     let connected = false;
     let googleResponse, googleLink;
 
-    if (googleResult) {
-      googleResponse = googleResult.items[0].title;
-      googleLink = googleResult.items[0].link;
-      console.log(googleResult.items[0]);
+    if (askResult) {
+      console.log(askResult._type);
+      // googleResponse = askResult.items[0].title;
+      // googleLink = askResult.items[0].link;
     }
 
     if (strangerStream === undefined) {
@@ -134,11 +188,13 @@ class App extends Component {
       <main>
           <Video stream={youStream} muted={`true`} connected={connected} />
           <Video stream={strangerStream} muted={`false`} connected='youStream' />
+
           {voiceActive ? (
             <button className={`google voiceActive`} onClick={this.handleStopVoiceCommands}></button>
           ) : (
             <button className={`google`} onClick={this.handleStartVoiceCommands}></button>
           )}
+
           <div className='googleResult'>
             <div className='speakResult'>
               <p className={`result_text ${result}`}>{voiceCommand}</p>
