@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import IO from 'socket.io-client';
 import Peer from 'peerjs';
 import annyang from 'annyang';
+import ReactPlayer from 'react-player';
 
 import Video from '../components/Video';
 import ResultVideo from '../components/ResultVideo';
@@ -127,6 +128,7 @@ class App extends Component {
       method: `GET`,
       headers: {
         Host: `api.cognitive.microsoft.com`,
+        'X-Frame-Options': `allow`,
         'Ocp-Apim-Subscription-Key': `65ddc224f4e34b6d8e55f319e66133a9`
       },
     })
@@ -181,8 +183,8 @@ class App extends Component {
         googleResponse = <ResultImage link={askResult.value[0].contentUrl} alt={askResult.value[0].name} title={askResult.value[0].name} />;
         break;
       case `Videos`:
-        //googleResponse = <ResultVideo link={askResult.value[0].url} alt={askResult.Videos.value[0].url} title={askResult.Videos.value[0].url} />;
-        //console.log(askResult);
+        googleResponse = <ReactPlayer url={askResult.value[0].contentUrl} playing className='youtube' />;
+        console.log(askResult.value[0]);
         break;
       default:
         googleResponse = <ResultWeb link={askResult.webPages.value[0].url} name={askResult.webPages.value[0].name} />;
@@ -212,7 +214,7 @@ class App extends Component {
               <p className={`result_text ${result}`}>{voiceCommand}</p>
             </div>
             <div className='searchResult'>
-                {googleResponse}
+              {googleResponse}
             </div>
           </div>
       </main>

@@ -176,13 +176,26 @@ video {
 
 .result_text {
   font-size: 2em;
-  width: 90%;
+  width: 94%;
   height: auto;
   display: flex;
   align-items: center;
   transition: all .5s ease;
   background: white;
   border-radius: 3px;
+}
+
+.googleLink {
+  border: 0;
+  color: #1a0dab;
+  font-size: 2em;
+  width: 64rem;
+  display: flex;
+  align-items: center;
+  margin: 0 2rem;
+  background: white;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px #aaa;
 }
 
 .resultFalse {
@@ -196,10 +209,7 @@ video {
 .searchResult {
   position: relative;
   height: auto;
-  box-shadow: 0 1px 2px #aaa;
-  width: 90%;
-  background: white;
-  border-radius: 3px;
+  width: 100%;
   margin-bottom: 3rem;
 }
 
@@ -207,15 +217,18 @@ video {
   height: 30rem;
   width: auto;
   overflow: hidden;
+  margin: 0 2rem;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px #aaa;
+}
+
+.youtube {
+  margin: 0 2rem;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px #aaa;
 }
 
 img {
   width: auto;
   height: 100%;
-}
-
-.googleLink {
-  border: 0;
-  color: #1a0dab;
-  margin: 0;
 }

@@ -1,27 +1,18 @@
 import React, {PropTypes} from 'react';
 
-const ResultVideo = ({stream, muted, connected}) => {
-
-  if (stream) stream = URL.createObjectURL(stream);
-  {/* <video autoPlay src={stream} muted></video> */}
+const ResultVideo = ({contentUrl}) => {
 
   return (
-      <article className={`video ${connected}`}>
-
-        {muted === `true` ? (
-          <video autoPlay src={stream} muted></video>
-        ) : (
-          <video autoPlay src={stream}></video>
-        )}
-      </article>
+    <article className={`googleImage`}>
+      <video src={`${contentUrl}&html5=True`} width='640' height='360' type='video/youtube' className='youtube' controls='controls' ></video>
+    </article>
   );
 
 };
 
 ResultVideo.propTypes = {
-  stream: PropTypes.object,
-  muted: PropTypes.string,
-  connected: PropTypes.string
+  contentUrl: PropTypes.string,
+  name: PropTypes.string
 };
 
 export default ResultVideo;
