@@ -29,10 +29,16 @@ module.exports.register = (server, options, next) => {
         me.paired = stranger.socketId;
         users = linkStranger(users, me);
 
-        socket.emit(`found`, stranger.socketId);
+        const data = [me.socketId, stranger.socketId];
+
+        socket.emit(`found`, data);
       }
 
       console.log(users);
+    });
+
+    socket.on(`yo`, data => {
+      io.to(data[1]).emit(`yo`, data[0]);
     });
 
     socket.on(`disconnect`, () => {

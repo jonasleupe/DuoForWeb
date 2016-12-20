@@ -3,7 +3,6 @@ import React, {PropTypes} from 'react';
 const Video = ({stream, muted, connected}) => {
 
   if (stream) stream = URL.createObjectURL(stream);
-  {/* <video autoPlay src={stream} muted></video> */}
 
   return (
       <article className={`video ${connected}`}>
