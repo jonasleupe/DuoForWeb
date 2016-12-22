@@ -60,8 +60,6 @@ class App extends Component {
 
   handleWSFound = data => {
     const {youStream} = this.state;
-    console.log(`my id = ${  data[0]}`);
-    console.log(`stranger id = ${  data[1]}`);
 
     let {strangerSocketId, mySocketId} = this.state;
     strangerSocketId = data[1];
@@ -75,7 +73,6 @@ class App extends Component {
   }
 
   searchBing = tag => {
-    console.log(`de google search is ${tag}`);
     this.setState({voiceCommand: tag, result: `resultTrue`});
 
     fetch(`https://api.cognitive.microsoft.com/bing/v5.0/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safesearch=Off`, {
@@ -90,7 +87,6 @@ class App extends Component {
   }
 
   searchBingImage = tag => {
-    console.log(`de google image search is ${tag}`);
     this.setState({voiceCommand: tag, result: `resultTrue`});
 
     fetch(`https://api.cognitive.microsoft.com/bing/v5.0/images/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safeSearch=Off`, {
@@ -105,7 +101,6 @@ class App extends Component {
   }
 
   showYoutube = tag => {
-    console.log(`de youtube search is ${tag}`);
     this.setState({voiceCommand: tag, result: `resultTrue`});
 
     fetch(`https://api.cognitive.microsoft.com/bing/v5.0/videos/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safeSearch=Off`, {
@@ -121,11 +116,10 @@ class App extends Component {
   }
 
   explainMe = () => {
-    console.log(`test`);
-    // const explaining = `If you are into cats, you can ask Google 'Show me cats'. But maybe you want to see a video? That's possible by asking 'Play cats'. But if you're that type of guy who's looking for just some information, you just ask it 'Search for cats'.`;
-    // this.setState({googleResult: explaining});
-    // this.setState({voiceCommand: `What can you do?`, result: `resultTrue`});
-    // this.handleStopVoiceCommands();
+    const explaining = `If you are into cats, you can ask Google 'Show me cats'. But maybe you want to see a video? That's possible by asking 'Play cats'. But if you're that type of guy who's looking for just some information, you just ask it 'Search for cats'.`;
+    this.setState({googleResult: explaining});
+    this.setState({voiceCommand: `What can you do?`, result: `resultTrue`});
+    this.handleStopVoiceCommands();
   }
 
   handleStartVoiceCommands = e => {
@@ -147,7 +141,6 @@ class App extends Component {
 
   handleStopVoiceCommands = d => {
     if (d) {
-      console.log(d);
       let {askResult} = this.state;
       askResult = d;
       this.setState({askResult});
@@ -161,7 +154,6 @@ class App extends Component {
   }
 
   handleWSYo = data => {
-    console.log(data);
     let {askResult, voiceCommand, result} = this.state;
     askResult = data[0];
     voiceCommand = data[3];
@@ -170,16 +162,13 @@ class App extends Component {
   }
 
   handleClickYo = askResult => {
-    console.log(askResult);
     const {strangerSocketId, mySocketId, voiceCommand} = this.state;
-    console.log(`strangerId = ${  strangerSocketId}`);
-    console.log(`mySocketId = ${  mySocketId}`);
     const socketInfo = [askResult, strangerSocketId, mySocketId, voiceCommand];
     this.socket.emit(`yo`, socketInfo);
   }
 
   handleInputChange = () => {
-    console.log(`hi`);
+    console.log(`todo; if input changed, new api call`);
   }
 
   initStream() {
@@ -220,7 +209,6 @@ class App extends Component {
 
 
     if (askResult) {
-      console.log(askResult._type);
       if (askResult._type === `Images`) {
         googleQuestion = `Show me ${  voiceCommand}`;
         googleResponse = <ResultImage link={askResult.value[0].contentUrl} alt={askResult.value[0].name} title={askResult.value[0].name} />;

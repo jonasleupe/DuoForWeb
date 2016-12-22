@@ -1,7 +1,5 @@
 module.exports.register = (server, options, next) => {
 
-  console.log(`hello roulette`);
-
   const io = require(`socket.io`)(server.listener);
   const Status = require(`./const/Status`);
 
@@ -18,8 +16,6 @@ module.exports.register = (server, options, next) => {
       status: Status.SEARCHING,
       socketId
     };
-
-    console.log(me.socketId);
     socket.emit(`connected`, me.socketId);
 
     users.push(me);
