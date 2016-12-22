@@ -113,10 +113,11 @@ class App extends Component {
       },
     })
     .then(r => r.json())
-    .then(d => this.setState({askResult: d}));
+    //.then(d => this.setState({askResult: d}));
+    .then(d => this.handleStopVoiceCommands(d));
 
-    const {askResult} = this.state;
-    console.log(askResult);
+    // const {askResult} = this.state;
+    // console.log(askResult);
 
     //this.handleStopVoiceCommands();
   }
@@ -134,10 +135,11 @@ class App extends Component {
       },
     })
     .then(r => r.json())
-    .then(d => this.setState({askResult: d}));
+    //.then(d => this.setState({askResult: d}));
+    .then(d => this.handleStopVoiceCommands(d));
 
-    const {askResult} = this.state;
-    console.log(askResult);
+    // const {askResult} = this.state;
+    // console.log(askResult);
 
     //this.handleStopVoiceCommands();
   }
