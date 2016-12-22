@@ -48,7 +48,7 @@ header {
 
 .video:nth-child(1) {
   z-index: 2;
-  transition: all .5s ease;
+  transition: all .2s ease;
 }
 
 .strangerNotConnected {
@@ -153,6 +153,7 @@ video {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all .2s ease;
 }
 
 .speakResult {
@@ -169,7 +170,7 @@ video {
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 2rem;
-  transition: all .5s ease;
+  transition: all .2s ease;
   z-index: 998;
   margin-bottom: 2rem;
 }
@@ -180,9 +181,14 @@ video {
   height: auto;
   display: flex;
   align-items: center;
-  transition: all .5s ease;
+  transition: all .2s ease;
   background: white;
   border-radius: 3px;
+  border: 0;
+}
+
+.result_text:focus {
+  outline: none;
 }
 
 .googleLink {
@@ -198,12 +204,16 @@ video {
   box-shadow: 0 1px 2px #aaa;
 }
 
-.resultFalse {
-  padding: 0;
+.speakResult .resultTrue {
+  padding: 1.5rem;
+  height: 3.5rem;
+  width: 94%;
 }
 
-.resultTrue {
-  padding: 1.5rem;
+.resultFalse {
+  padding: 0;
+  height: 0;
+  width: 0;
 }
 
 .searchResult {

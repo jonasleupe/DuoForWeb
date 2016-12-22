@@ -14917,7 +14917,8 @@ var App = function (_Component) {
       voiceCommand: '',
       result: 'resultFalse',
       askResult: '',
-      strangerSocketId: ''
+      strangerSocketId: '',
+      mySocketId: ''
     }, _this.initPeer = function () {
       var id = _this.socket.id;
 
@@ -14952,13 +14953,18 @@ var App = function (_Component) {
     }, _this.handleStrangerStream = function (strangerStream) {
       _this.setState({ strangerStream: strangerStream });
     }, _this.handleWSFound = function (data) {
-      console.log('stranger id = ' + data[1]);
-      console.log('my id = ' + data[0]);
       var youStream = _this.state.youStream;
-      var strangerSocketId = _this.state.strangerSocketId;
+
+      console.log('my id = ' + data[0]);
+      console.log('stranger id = ' + data[1]);
+
+      var _this$state = _this.state,
+          strangerSocketId = _this$state.strangerSocketId,
+          mySocketId = _this$state.mySocketId;
 
       strangerSocketId = data[1];
-      _this.setState({ strangerSocketId: strangerSocketId });
+      mySocketId = data[0];
+      _this.setState({ strangerSocketId: strangerSocketId, mySocketId: mySocketId });
 
       var call = _this.peer.call(data[1], youStream);
       call.on('stream', _this.handleStrangerStream);
@@ -14966,10 +14972,6 @@ var App = function (_Component) {
     }, _this.searchBing = function (tag) {
       console.log('de google search is ' + tag);
       _this.setState({ voiceCommand: tag, result: 'resultTrue' });
-
-      // fetch(`https://www.googleapis.com/customsearch/v1?q=${tag}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
-      //     .then(r => r.json())
-      //     .then(d => this.setState({askResult: d}));
 
       fetch('https://api.cognitive.microsoft.com/bing/v5.0/search?q=' + tag + '&count=1&offset=0&mkt=nl-NL&safesearch=Off', {
         method: 'GET',
@@ -14979,13 +14981,9 @@ var App = function (_Component) {
         }
       }).then(function (r) {
         return r.json();
-      })
-      //.then(d => this.setState({askResult: d}));
-      .then(function (d) {
+      }).then(function (d) {
         return _this.handleStopVoiceCommands(d);
       });
-
-      //this.handleStopVoiceCommands();
     }, _this.searchBingImage = function (tag) {
       console.log('de google image search is ' + tag);
       _this.setState({ voiceCommand: tag, result: 'resultTrue' });
@@ -14999,13 +14997,8 @@ var App = function (_Component) {
       }).then(function (r) {
         return r.json();
       }).then(function (d) {
-        return _this.setState({ askResult: d });
+        return _this.handleStopVoiceCommands(d);
       });
-
-      // const {askResult} = this.state;
-      // console.log(askResult);
-
-      //this.handleStopVoiceCommands();
     }, _this.showYoutube = function (tag) {
       console.log('de youtube search is ' + tag);
       _this.setState({ voiceCommand: tag, result: 'resultTrue' });
@@ -15020,61 +15013,78 @@ var App = function (_Component) {
       }).then(function (r) {
         return r.json();
       }).then(function (d) {
-        return _this.setState({ askResult: d });
+        return _this.handleStopVoiceCommands(d);
       });
-
-      var askResult = _this.state.askResult;
-
-      console.log(askResult);
-
-      //this.handleStopVoiceCommands();
+    }, _this.explainMe = function () {
+      console.log('test');
+      // const explaining = `If you are into cats, you can ask Google 'Show me cats'. But maybe you want to see a video? That's possible by asking 'Play cats'. But if you're that type of guy who's looking for just some information, you just ask it 'Search for cats'.`;
+      // this.setState({googleResult: explaining});
+      // this.setState({voiceCommand: `What can you do?`, result: `resultTrue`});
+      // this.handleStopVoiceCommands();
     }, _this.handleStartVoiceCommands = function (e) {
       e.preventDefault();
       _this.setState({ voiceActive: true, voiceCommand: '', result: 'resultFalse' });
 
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.start();
+      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.resume();
 
       var commands = {
         'search for *tag': _this.searchBing,
         'play *tag': _this.showYoutube,
-        'show me *tag': _this.searchBingImage
+        'show me *tag': _this.searchBingImage,
+        'What can you do': _this.explainMe
       };
 
       __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.addCommands(commands);
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.setLanguage('nl-NL');
+      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.setLanguage('en-US');
     }, _this.handleStopVoiceCommands = function (d) {
-      console.log(d);
-      var askResult = _this.state.askResult;
+      if (d) {
+        console.log(d);
+        var askResult = _this.state.askResult;
 
-      askResult = d;
-      _this.setState({ askResult: askResult });
-      _this.setState({ voiceActive: false });
-      __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.abort();
-      _this.handleClickYo(askResult);
-    }, _this.handleWSYo = function (askResultFromStranger) {
-      var askResult = _this.state.askResult;
+        askResult = d;
+        _this.setState({ askResult: askResult });
+        _this.setState({ voiceActive: false });
+        __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.abort();
+        _this.handleClickYo(askResult);
+      } else {
+        _this.setState({ voiceActive: false });
+        __WEBPACK_IMPORTED_MODULE_3_annyang___default.a.abort();
+      }
+    }, _this.handleWSYo = function (data) {
+      console.log(data);
+      var _this$state2 = _this.state,
+          askResult = _this$state2.askResult,
+          voiceCommand = _this$state2.voiceCommand,
+          result = _this$state2.result;
 
-      askResult = askResultFromStranger;
-      _this.setState({ askResult: askResult });
+      askResult = data[0];
+      voiceCommand = data[3];
+      result = 'resultTrue';
+      _this.setState({ askResult: askResult, voiceCommand: voiceCommand, result: result });
     }, _this.handleClickYo = function (askResult) {
-      var strangerSocketId = _this.state.strangerSocketId;
+      console.log(askResult);
+      var _this$state3 = _this.state,
+          strangerSocketId = _this$state3.strangerSocketId,
+          mySocketId = _this$state3.mySocketId,
+          voiceCommand = _this$state3.voiceCommand;
 
-      var socketInfo = [askResult, strangerSocketId];
+      console.log('strangerId = ' + strangerSocketId);
+      console.log('mySocketId = ' + mySocketId);
+      var socketInfo = [askResult, strangerSocketId, mySocketId, voiceCommand];
       _this.socket.emit('yo', socketInfo);
+    }, _this.handleInputChange = function () {
+      console.log('hi');
     }, _this.handleYouStream = function (youStream) {
       _this.setState({ youStream: youStream });
-      //this.initSocket();
     }, _this.handleYouStreamError = function (e) {
       return console.error(e);
+    }, _this.handleMySocketId = function (data) {
+      var mySocketId = _this.state.mySocketId;
+
+      mySocketId = data;
+      _this.setState({ mySocketId: mySocketId });
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
-
-  App.prototype.initSocket = function initSocket() {
-    this.socket = __WEBPACK_IMPORTED_MODULE_1_socket_io_client___default()('/');
-    this.socket.on('connect', this.initPeer);
-    this.socket.on('found', this.handleWSFound);
-    this.socket.on('yo', this.handleWSYo);
-  };
 
   App.prototype.initStream = function initStream() {
     navigator.getUserMedia({ audio: true, video: true }, this.handleYouStream, this.handleYouStreamError);
@@ -15086,6 +15096,7 @@ var App = function (_Component) {
     this.socket.on('connect', this.initPeer);
     this.socket.on('found', this.handleWSFound);
     this.socket.on('yo', this.handleWSYo);
+    this.socket.on('connected', this.handleMySocketId);
   };
 
   App.prototype.render = function render() {
@@ -15100,30 +15111,31 @@ var App = function (_Component) {
 
     var connected = false;
     var googleResponse = void 0;
+    var googleQuestion = void 0;
 
     if (askResult) {
-      switch (askResult._type) {
-        case 'Images':
-          googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_ResultImage__["a" /* default */], { link: askResult.value[0].contentUrl, alt: askResult.value[0].name, title: askResult.value[0].name, __source: {
-              fileName: _jsxFileName,
-              lineNumber: 215
-            }
-          });
-          break;
-        case 'Videos':
-          googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4_react_player___default.a, { url: askResult.value[0].contentUrl, playing: true, className: 'youtube', __source: {
-              fileName: _jsxFileName,
-              lineNumber: 218
-            }
-          });
-          break;
-        default:
-          googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_ResultWeb__["a" /* default */], { link: askResult.webPages.value[0].url, name: askResult.webPages.value[0].name, __source: {
-              fileName: _jsxFileName,
-              lineNumber: 221
-            }
-          });
-          break;
+      console.log(askResult._type);
+      if (askResult._type === 'Images') {
+        googleQuestion = 'Show me ' + voiceCommand;
+        googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_ResultImage__["a" /* default */], { link: askResult.value[0].contentUrl, alt: askResult.value[0].name, title: askResult.value[0].name, __source: {
+            fileName: _jsxFileName,
+            lineNumber: 226
+          }
+        });
+      } else if (askResult._type === 'Videos') {
+        googleQuestion = 'Play ' + voiceCommand;
+        googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4_react_player___default.a, { url: askResult.value[0].contentUrl, playing: true, className: 'youtube', __source: {
+            fileName: _jsxFileName,
+            lineNumber: 229
+          }
+        });
+      } else if (askResult._type === 'SearchResponse') {
+        googleQuestion = 'Search for ' + voiceCommand;
+        googleResponse = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_ResultWeb__["a" /* default */], { link: askResult.webPages.value[0].url, name: askResult.webPages.value[0].name, __source: {
+            fileName: _jsxFileName,
+            lineNumber: 232
+          }
+        });
       }
     }
 
@@ -15138,57 +15150,53 @@ var App = function (_Component) {
       {
         __source: {
           fileName: _jsxFileName,
-          lineNumber: 233
+          lineNumber: 243
         }
       },
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__components_Video__["a" /* default */], { stream: youStream, muted: 'true', connected: connected, __source: {
           fileName: _jsxFileName,
-          lineNumber: 234
+          lineNumber: 244
         }
       }),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__components_Video__["a" /* default */], { stream: strangerStream, muted: 'false', connected: 'youStream', __source: {
           fileName: _jsxFileName,
-          lineNumber: 235
+          lineNumber: 245
         }
       }),
       voiceActive ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('button', { className: 'google voiceActive', onClick: this.handleStopVoiceCommands, __source: {
           fileName: _jsxFileName,
-          lineNumber: 238
+          lineNumber: 248
         }
       }) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('button', { className: 'google', onClick: this.handleStartVoiceCommands, __source: {
           fileName: _jsxFileName,
-          lineNumber: 240
+          lineNumber: 250
         }
       }),
       __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
         'div',
-        { className: 'googleResult', __source: {
+        { className: 'googleResult ' + result, __source: {
             fileName: _jsxFileName,
-            lineNumber: 243
+            lineNumber: 253
           }
         },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
           { className: 'speakResult', __source: {
               fileName: _jsxFileName,
-              lineNumber: 244
+              lineNumber: 254
             }
           },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'p',
-            { className: 'result_text ' + result, __source: {
-                fileName: _jsxFileName,
-                lineNumber: 245
-              }
-            },
-            voiceCommand
-          )
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', className: 'result_text ' + result, onChange: this.handleInputChange, placeholder: googleQuestion, __source: {
+              fileName: _jsxFileName,
+              lineNumber: 255
+            }
+          })
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
           'div',
           { className: 'searchResult', __source: {
               fileName: _jsxFileName,
-              lineNumber: 247
+              lineNumber: 257
             }
           },
           googleResponse
@@ -35194,4 +35202,4 @@ module.exports = __webpack_require__(110);
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=main.eda66ef11d9238855350.js.map
+//# sourceMappingURL=main.8b883f88011f3228575b.js.map

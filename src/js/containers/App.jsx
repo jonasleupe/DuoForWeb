@@ -17,14 +17,8 @@ class App extends Component {
     voiceCommand: ``,
     result: `resultFalse`,
     askResult: ``,
-    strangerSocketId: ``
-  }
-
-  initSocket() {
-    this.socket = IO(`/`);
-    this.socket.on(`connect`, this.initPeer);
-    this.socket.on(`found`, this.handleWSFound);
-    this.socket.on(`yo`, this.handleWSYo);
+    strangerSocketId: ``,
+    mySocketId: ``
   }
 
   initPeer = () => {
@@ -65,13 +59,14 @@ class App extends Component {
   }
 
   handleWSFound = data => {
-    console.log(`stranger id = ${  data[1]}`);
-    console.log(`my id = ${  data[0]}`);
     const {youStream} = this.state;
+    console.log(`my id = ${  data[0]}`);
+    console.log(`stranger id = ${  data[1]}`);
 
-    let {strangerSocketId} = this.state;
+    let {strangerSocketId, mySocketId} = this.state;
     strangerSocketId = data[1];
-    this.setState({strangerSocketId});
+    mySocketId = data[0];
+    this.setState({strangerSocketId, mySocketId});
 
     const call = this.peer.call(data[1], youStream);
     call.on(`stream`, this.handleStrangerStream);
@@ -83,10 +78,6 @@ class App extends Component {
     console.log(`de google search is ${tag}`);
     this.setState({voiceCommand: tag, result: `resultTrue`});
 
-    // fetch(`https://www.googleapis.com/customsearch/v1?q=${tag}&cref=https%3A%2F%2Fcse.google.com%3A443%2Fcse%2Fpublicurl%3Fcx%3D006195244337884894805%3Axugllpj1yoc&cx=006195244337884894805%3Axugllpj1yoc&lr=lang_nl&num=1&key=AIzaSyBaS5tmO3A2z27-fHnJofcMVP94ikmfLUQ`)
-    //     .then(r => r.json())
-    //     .then(d => this.setState({askResult: d}));
-
     fetch(`https://api.cognitive.microsoft.com/bing/v5.0/search?q=${tag}&count=1&offset=0&mkt=nl-NL&safesearch=Off`, {
       method: `GET`,
       headers: {
@@ -95,10 +86,7 @@ class App extends Component {
       },
     })
     .then(r => r.json())
-    //.then(d => this.setState({askResult: d}));
     .then(d => this.handleStopVoiceCommands(d));
-
-    //this.handleStopVoiceCommands();
   }
 
   searchBingImage = tag => {
@@ -113,13 +101,7 @@ class App extends Component {
       },
     })
     .then(r => r.json())
-    //.then(d => this.setState({askResult: d}));
     .then(d => this.handleStopVoiceCommands(d));
-
-    // const {askResult} = this.state;
-    // console.log(askResult);
-
-    //this.handleStopVoiceCommands();
   }
 
   showYoutube = tag => {
@@ -135,51 +117,69 @@ class App extends Component {
       },
     })
     .then(r => r.json())
-    //.then(d => this.setState({askResult: d}));
     .then(d => this.handleStopVoiceCommands(d));
+  }
 
-    // const {askResult} = this.state;
-    // console.log(askResult);
-
-    //this.handleStopVoiceCommands();
+  explainMe = () => {
+    console.log(`test`);
+    // const explaining = `If you are into cats, you can ask Google 'Show me cats'. But maybe you want to see a video? That's possible by asking 'Play cats'. But if you're that type of guy who's looking for just some information, you just ask it 'Search for cats'.`;
+    // this.setState({googleResult: explaining});
+    // this.setState({voiceCommand: `What can you do?`, result: `resultTrue`});
+    // this.handleStopVoiceCommands();
   }
 
   handleStartVoiceCommands = e => {
     e.preventDefault();
     this.setState({voiceActive: true, voiceCommand: ``, result: `resultFalse`});
 
-    annyang.start();
+    annyang.resume();
 
     const commands = {
       'search for *tag': this.searchBing,
       'play *tag': this.showYoutube,
-      'show me *tag': this.searchBingImage
+      'show me *tag': this.searchBingImage,
+      'What can you do': this.explainMe
     };
 
     annyang.addCommands(commands);
-    annyang.setLanguage(`nl-NL`);
+    annyang.setLanguage(`en-US`);
   }
 
   handleStopVoiceCommands = d => {
-    console.log(d);
-    let {askResult} = this.state;
-    askResult = d;
-    this.setState({askResult});
-    this.setState({voiceActive: false});
-    annyang.abort();
-    this.handleClickYo(askResult);
+    if (d) {
+      console.log(d);
+      let {askResult} = this.state;
+      askResult = d;
+      this.setState({askResult});
+      this.setState({voiceActive: false});
+      annyang.abort();
+      this.handleClickYo(askResult);
+    } else {
+      this.setState({voiceActive: false});
+      annyang.abort();
+    }
   }
 
-  handleWSYo = askResultFromStranger => {
-    let {askResult} = this.state;
-    askResult = askResultFromStranger;
-    this.setState({askResult});
+  handleWSYo = data => {
+    console.log(data);
+    let {askResult, voiceCommand, result} = this.state;
+    askResult = data[0];
+    voiceCommand = data[3];
+    result = `resultTrue`;
+    this.setState({askResult, voiceCommand, result});
   }
 
   handleClickYo = askResult => {
-    const {strangerSocketId} = this.state;
-    const socketInfo = [askResult, strangerSocketId];
+    console.log(askResult);
+    const {strangerSocketId, mySocketId, voiceCommand} = this.state;
+    console.log(`strangerId = ${  strangerSocketId}`);
+    console.log(`mySocketId = ${  mySocketId}`);
+    const socketInfo = [askResult, strangerSocketId, mySocketId, voiceCommand];
     this.socket.emit(`yo`, socketInfo);
+  }
+
+  handleInputChange = () => {
+    console.log(`hi`);
   }
 
   initStream() {
@@ -192,10 +192,15 @@ class App extends Component {
 
   handleYouStream = youStream => {
     this.setState({youStream});
-    //this.initSocket();
   }
 
   handleYouStreamError = e => console.error(e);
+
+  handleMySocketId = data => {
+    let {mySocketId} = this.state;
+    mySocketId = data;
+    this.setState({mySocketId});
+  };
 
   componentDidMount() {
     this.initStream();
@@ -203,6 +208,7 @@ class App extends Component {
     this.socket.on(`connect`, this.initPeer);
     this.socket.on(`found`, this.handleWSFound);
     this.socket.on(`yo`, this.handleWSYo);
+    this.socket.on(`connected`, this.handleMySocketId);
   }
 
   render() {
@@ -210,18 +216,20 @@ class App extends Component {
 
     let connected = false;
     let googleResponse;
+    let googleQuestion;
+
 
     if (askResult) {
-      switch (askResult._type) {
-      case `Images`:
+      console.log(askResult._type);
+      if (askResult._type === `Images`) {
+        googleQuestion = `Show me ${  voiceCommand}`;
         googleResponse = <ResultImage link={askResult.value[0].contentUrl} alt={askResult.value[0].name} title={askResult.value[0].name} />;
-        break;
-      case `Videos`:
+      } else if (askResult._type === `Videos`) {
+        googleQuestion = `Play ${  voiceCommand}`;
         googleResponse = <ReactPlayer url={askResult.value[0].contentUrl} playing className='youtube' />;
-        break;
-      default:
+      } else if (askResult._type === `SearchResponse`) {
+        googleQuestion = `Search for ${  voiceCommand}`;
         googleResponse = <ResultWeb link={askResult.webPages.value[0].url} name={askResult.webPages.value[0].name} />;
-        break;
       }
     }
 
@@ -242,9 +250,9 @@ class App extends Component {
             <button className={`google`} onClick={this.handleStartVoiceCommands}></button>
           )}
 
-          <div className='googleResult'>
+          <div className={`googleResult ${result}`}>
             <div className='speakResult'>
-              <p className={`result_text ${result}`}>{voiceCommand}</p>
+              <input type='text' className={`result_text ${result}`} onChange={this.handleInputChange} placeholder={googleQuestion} />
             </div>
             <div className='searchResult'>
               {googleResponse}

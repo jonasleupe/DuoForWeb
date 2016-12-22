@@ -19,6 +19,9 @@ module.exports.register = (server, options, next) => {
       socketId
     };
 
+    console.log(me.socketId);
+    socket.emit(`connected`, me.socketId);
+
     users.push(me);
 
     socket.on(`search`, () => {
@@ -34,18 +37,15 @@ module.exports.register = (server, options, next) => {
         socket.emit(`found`, data);
       }
 
-      console.log(users);
     });
 
     socket.on(`yo`, data => {
-      io.to(data[1]).emit(`yo`, data[0]);
+      io.to(data[1]).emit(`yo`, data);
     });
 
     socket.on(`disconnect`, () => {
       users = users.filter(c => c.socketId !== socketId);
       users = cleanPaired(users, me);
-
-      console.log(users);
     });
   });
 
