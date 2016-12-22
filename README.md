@@ -12,3 +12,6 @@ But you can also ask for:
 * 'Show me ${tag}' to get images from your tag/
 * 'Play ${tag}' to play a video of the tag
 * 'Search for ${tag}' if you want to search for the tag on the web.
+
+## Demo
+<a href="https://www.duoforweb.herokuapp.com">duoforweb.herokuapp.com</a>
